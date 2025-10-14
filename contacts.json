@@ -1,0 +1,12 @@
+[
+{
+    "model": "catalog.contact",
+    "pk": 1,
+    "fields": {
+        "name": "Svetlana",
+        "phone": "+79999999999",
+        "message": "Thank you",
+        "created_at": "2025-10-14T12:54:18.922Z"
+    }
+}
+]
