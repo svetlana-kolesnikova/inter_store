@@ -1,29 +1,5 @@
 [
 {
-    "model": "catalog.category",
-    "pk": 1,
-    "fields": {
-        "name": "Смартфоны",
-        "description": ""
-    }
-},
-{
-    "model": "catalog.category",
-    "pk": 2,
-    "fields": {
-        "name": "Газон",
-        "description": "Различные травяные покрытия"
-    }
-},
-{
-    "model": "catalog.category",
-    "pk": 3,
-    "fields": {
-        "name": "Телевизоры",
-        "description": "Современные телевизоры"
-    }
-},
-{
     "model": "catalog.product",
     "pk": 1,
     "fields": {
@@ -64,19 +40,6 @@
 },
 {
     "model": "catalog.product",
-    "pk": 4,
-    "fields": {
-        "name": "55\" QLED 4K",
-        "description": "LED, диагональ 55, чёрный",
-        "image": "",
-        "category": 3,
-        "price": "30000.00",
-        "created_at": "2025-10-13T17:57:35.952Z",
-        "updated_at": "2025-10-13T17:57:35.952Z"
-    }
-},
-{
-    "model": "catalog.product",
     "pk": 5,
     "fields": {
         "name": "65\" QLED 2K",
@@ -112,6 +75,19 @@
         "price": "1000.00",
         "created_at": "2025-10-13T17:59:00.128Z",
         "updated_at": "2025-10-13T17:59:00.128Z"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 8,
+    "fields": {
+        "name": "Газон SR",
+        "description": "Подходит для спортивных площадок",
+        "image": "",
+        "category": 2,
+        "price": "1200.00",
+        "created_at": "2025-10-14T11:12:57.884Z",
+        "updated_at": "2025-10-14T11:12:57.884Z"
     }
 }
 ]
