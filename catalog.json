@@ -1,0 +1,117 @@
+[
+{
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+        "name": "Смартфоны",
+        "description": ""
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+        "name": "Газон",
+        "description": "Различные травяные покрытия"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+        "name": "Телевизоры",
+        "description": "Современные телевизоры"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 1,
+    "fields": {
+        "name": "Iphone 15",
+        "description": "512GB, Gray space",
+        "image": "products/i_phone_15.jpg",
+        "category": 1,
+        "price": "60000.00",
+        "created_at": "2025-10-13T16:30:59.991Z",
+        "updated_at": "2025-10-13T16:30:59.991Z"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 2,
+    "fields": {
+        "name": "Xiaomi Redmi Note 11",
+        "description": "Xiaomi Redmi Note 11",
+        "image": "products/xiaomi_redmi_note_11.jpg",
+        "category": 1,
+        "price": "70000.00",
+        "created_at": "2025-10-13T17:55:33.317Z",
+        "updated_at": "2025-10-13T17:55:33.317Z"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 3,
+    "fields": {
+        "name": "Samsung Galaxy S23 Ultra",
+        "description": "256GB, Серый цвет, 200MP камера",
+        "image": "products/samsung_galaxy_s23_ultra.jpg",
+        "category": 1,
+        "price": "80000.00",
+        "created_at": "2025-10-13T17:56:58.221Z",
+        "updated_at": "2025-10-13T17:56:58.221Z"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 4,
+    "fields": {
+        "name": "55\" QLED 4K",
+        "description": "LED, диагональ 55, чёрный",
+        "image": "",
+        "category": 3,
+        "price": "30000.00",
+        "created_at": "2025-10-13T17:57:35.952Z",
+        "updated_at": "2025-10-13T17:57:35.952Z"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 5,
+    "fields": {
+        "name": "65\" QLED 2K",
+        "description": "LED, диагональ 65, белый",
+        "image": "",
+        "category": 3,
+        "price": "40000.00",
+        "created_at": "2025-10-13T17:57:53.627Z",
+        "updated_at": "2025-10-13T17:57:53.627Z"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 6,
+    "fields": {
+        "name": "Газонная трава 2",
+        "description": "Выносливая трава",
+        "image": "",
+        "category": 2,
+        "price": "500.00",
+        "created_at": "2025-10-13T17:58:30.142Z",
+        "updated_at": "2025-10-13T17:58:30.142Z"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 7,
+    "fields": {
+        "name": "Газонная трава",
+        "description": "Элитная трава для газона",
+        "image": "",
+        "category": 2,
+        "price": "1000.00",
+        "created_at": "2025-10-13T17:59:00.128Z",
+        "updated_at": "2025-10-13T17:59:00.128Z"
+    }
+}
+]
