@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.getenv('DEBUG') == True else False
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = ['*']
 
@@ -59,7 +59,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,9 +125,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIR = [BASE_DIR / 'static',]
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
-MEDDIA_URL = '/media/'
+# for admin files
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
