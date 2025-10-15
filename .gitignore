@@ -178,3 +178,5 @@ cython_debug/
 database.ini
 
 sqlite
+
+test_db_conn.py
