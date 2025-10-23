@@ -14,26 +14,27 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from xml.etree.ElementInclude import include
 
+# from xml.etree.ElementInclude import include
+
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import include, path
+
 from catalog import views
-# from django.conf import settings
-# from django.conf.urls.static import static
+from catalog.views import add_product
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.home, name='home'),  # ✅ теперь главная страница — home()
-    path('contacts/', views.contacts, name='contacts'),
-    path('catalog/', include('catalog.urls', namespace='catalog')),
+    path("admin/", admin.site.urls),
+    path("", views.home, name="home"),  # ✅ теперь главная страница — home()
+    path("contacts/", views.contacts, name="contacts"),
+    path("catalog/", include("catalog.urls", namespace="catalog")),
+    path("product_details/", views.product_details),
+    path("add_product/", add_product, name="add_product"),
 ]
-# urlpatterns = [
-#     path('admin/', admin.site.urls),
-#     path('catalog/', include('catalog.urls', namespace='catalog'))
-# ]
 
 # Добавляем поддержку статики и медиа при DEBUG=True
-# if settings.DEBUG:
-#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
