@@ -22,16 +22,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
-from catalog import views
-from catalog.views import add_product
-
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", views.home, name="home"),  # ✅ теперь главная страница — home()
-    path("contacts/", views.contacts, name="contacts"),
     path("catalog/", include("catalog.urls", namespace="catalog")),
-    path("product_details/", views.product_details),
-    path("add_product/", add_product, name="add_product"),
+    path("blog/", include("blog.urls", namespace="blog")),
 ]
 
 # Добавляем поддержку статики и медиа при DEBUG=True
