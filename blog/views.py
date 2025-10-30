@@ -28,6 +28,8 @@ class BlogDetailView(DetailView):
     context_object_name = "blog"
 
     def get_object(self, queryset=None):
+        """Счётчик просмотров статьи"""
+
         obj = super().get_object(queryset)
         obj.views_count += 1
         obj.save(update_fields=["views_count"])
@@ -40,6 +42,7 @@ class BlogDetailView(DetailView):
 
     def send_congrat_email(self, blog):
         """Отправка сообщения о достижении 100 просмотров на e-mail"""
+
         subject = f"Блог '{blog.title}' достиг 100 просмотров!"
         message = f"Поздравляем! Ваша статья '{blog.title}' достигла 100 просмотров."
         from_email = settings.DEFAULT_FROM_EMAIL
