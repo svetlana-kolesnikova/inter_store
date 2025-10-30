@@ -1,0 +1,70 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Каталог продуктов{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">Каталог продуктов</h1>
+
+    <div class="text-end mb-3">
+        <a href="{% url 'catalog:product_create' %}" class="btn btn-primary">+ Новая запись</a>
+    </div>
+
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ blog.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text text-muted">
+                        {{ product.created_at|date:"d.m.Y" }}
+                    </p>
+                    <a href="{% url 'catalog:product_details' product.pk %}" class="btn btn-outline-primary btn-sm">
+                        Читать далее
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">Пока нет продуктов.</p>
+        {% endfor %}
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+        <nav>
+            <ul class="pagination">
+
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Следующая</a>
+                </li>
+                {% endif %}
+
+            </ul>
+        </nav>
+    </div>
+</div>
+
+{% endblock %}

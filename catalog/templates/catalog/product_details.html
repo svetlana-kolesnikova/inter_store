@@ -4,6 +4,8 @@
 
 {% block content %}
 
+<a href="{% url 'catalog:products_list' %}" class="btn btn-secondary mb-3">← Назад к списку</a>
+
 <h2>{{ product.name }}</h2>
 
 {% if product.image %}
@@ -20,5 +22,10 @@
 <p><strong>Категория:</strong> {{ product.category }}</p>
 <p><strong>Дата создания:</strong> {{ product.created_at|date:"d.m.Y H:i" }}</p>
 <p><strong>Последнее изменение:</strong> {{ product.updated_at|date:"d.m.Y H:i" }}</p>
+
+<div class="mt-3">
+    <a href="{% url 'catalog:product_update' product.pk %}" class="btn btn-warning">Редактировать</a>
+    <a href="{% url 'catalog:product_delete' product.pk %}" class="btn btn-danger">Удалить</a>
+</div>
 
 {% endblock %}
