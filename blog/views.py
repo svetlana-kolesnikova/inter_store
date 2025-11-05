@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import BlogForm
 from .models import Blog
 
@@ -20,7 +20,7 @@ class BlogListView(ListView):
         return Blog.objects.filter(is_published=True).order_by("-created_at")
 
 
-class BlogDetailView(DetailView):
+class BlogDetailView(LoginRequiredMixin, DetailView):
     """Детальный просмотр одной записи"""
 
     model = Blog
@@ -51,7 +51,7 @@ class BlogDetailView(DetailView):
         send_mail(subject, message, from_email, recipient_list)
 
 
-class BlogCreateView(CreateView):
+class BlogCreateView(LoginRequiredMixin, CreateView):
     """Создание новой записи"""
 
     model = Blog
@@ -60,7 +60,7 @@ class BlogCreateView(CreateView):
     success_url = reverse_lazy("blog:blog_list")
 
 
-class BlogUpdateView(UpdateView):
+class BlogUpdateView(LoginRequiredMixin, UpdateView):
     """Редактирование записи"""
 
     model = Blog
@@ -71,7 +71,7 @@ class BlogUpdateView(UpdateView):
         return reverse("blog:blog_detail", kwargs={"pk": self.object.pk})
 
 
-class BlogDeleteView(DeleteView):
+class BlogDeleteView(LoginRequiredMixin, DeleteView):
     """Удаление записи"""
 
     model = Blog

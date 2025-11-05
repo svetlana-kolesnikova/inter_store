@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import ProductForm
 from .models import Contact, Product
@@ -50,7 +51,7 @@ class ProductListView(ListView):
         return Product.objects.order_by("-created_at")
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin, DetailView):
     """Детали конкретного продукта"""
 
     model = Product
@@ -58,18 +59,7 @@ class ProductDetailView(DetailView):
     context_object_name = "product"
 
 
-class ProductCreateView(CreateView):
-    """Добавление нового продукта"""
-
-    model = Product
-    form_class = ProductForm
-    template_name = "catalog/add_product.html"
-
-    def get_success_url(self):
-        return reverse("catalog:product_details", kwargs={"pk": self.object.pk})
-
-
-class ProductUpdateView(UpdateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     """Добавление нового продукта"""
 
     model = Product
@@ -80,7 +70,18 @@ class ProductUpdateView(UpdateView):
         return reverse("catalog:product_details", kwargs={"pk": self.object.pk})
 
 
-class ProductDeleteView(DeleteView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
+    """Добавление нового продукта"""
+
+    model = Product
+    form_class = ProductForm
+    template_name = "catalog/product_form.html"
+
+    def get_success_url(self):
+        return reverse("catalog:product_details", kwargs={"pk": self.object.pk})
+
+
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     """Удаление продукта"""
 
     model = Product
