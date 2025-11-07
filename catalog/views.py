@@ -1,9 +1,9 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import ProductForm
 from .models import Contact, Product
@@ -77,6 +77,13 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProductForm
     template_name = "catalog/product_form.html"
 
+    #  проверка: редактировать может только владелец
+    def dispatch(self, request, *args, **kwargs):
+        product = self.get_object()
+        if product.owner != request.user:
+            return HttpResponseForbidden("Вы не можете редактировать чужой продукт!")
+        return super().dispatch(request, *args, **kwargs)
+
     def get_success_url(self):
         return reverse("catalog:product_details", kwargs={"pk": self.object.pk})
 
@@ -87,3 +94,33 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     template_name = "catalog/product_confirm_delete.html"
     success_url = reverse_lazy("catalog:products_list")
+
+    #  удалять может владелец или модератор
+    def dispatch(self, request, *args, **kwargs):
+        product = self.get_object()
+
+        # владелец — можно
+        if product.owner == request.user:
+            return super().dispatch(request, *args, **kwargs)
+
+        # модератор продуктов — тоже можно
+        if request.user.has_perm("catalog.delete_product"):
+            return super().dispatch(request, *args, **kwargs)
+
+        return HttpResponseForbidden("У вас нет прав на удаление этого продукта.")
+
+
+class UnpublishProductView(LoginRequiredMixin, View):
+    """Отмена публикации продукта"""
+
+    def post(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+
+        if not request.user.has_perm("catalog.can_unpublish_product"):
+            return HttpResponseForbidden("У вас нет прав для отмены публикации продукта.")
+
+        # Логика статуса публикации книги
+        product.is_published = False
+        product.save()
+
+        return redirect("catalog:product_delete", pk=pk)
