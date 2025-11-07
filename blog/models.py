@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -14,6 +15,8 @@ class Blog(models.Model):
     is_published = models.BooleanField("Опубликовано", default=False)
     views_count = models.PositiveIntegerField("Количество просмотров", default=0)
 
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
     def __str__(self):
         return self.title
 
@@ -21,3 +24,6 @@ class Blog(models.Model):
         verbose_name = "блог"
         verbose_name_plural = "блоги"
         ordering = ["-created_at"]
+        permissions = [
+            ("can_publish_blog", "Может публиковать блог"),
+        ]

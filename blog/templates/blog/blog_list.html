@@ -26,6 +26,10 @@
                     <a href="{% url 'blog:blog_detail' blog.pk %}" class="btn btn-outline-primary btn-sm">
                         Читать далее
                     </a>
+                    {% if blog.author == user or user.groups.filter(name="Контент-менеджер").exists %}
+                        <a href="{% url 'blog:blog_update' blog.pk %}" class="btn btn-warning btn-sm ms-1">Редактировать</a>
+                        <a href="{% url 'blog:blog_delete' blog.pk %}" class="btn btn-danger btn-sm ms-1">Удалить</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
