@@ -1,3 +1,5 @@
+
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
@@ -69,6 +71,12 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse("catalog:product_details", kwargs={"pk": self.object.pk})
 
+    def form_valid(self, form):
+        product = form.save(commit=False)
+        product.owner = self.request.user
+        product.save()
+        return super().form_valid(form)
+
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     """Добавление нового продукта"""
@@ -123,4 +131,4 @@ class UnpublishProductView(LoginRequiredMixin, View):
         product.is_published = False
         product.save()
 
-        return redirect("catalog:product_delete", pk=pk)
+        return redirect("catalog:product_details", pk=pk)
