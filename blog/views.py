@@ -1,8 +1,10 @@
 from django.conf import settings
-from django.core.mail import send_mail
-from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail import send_mail
+from django.http import HttpResponseForbidden
+from django.urls import reverse
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+
 from .forms import BlogForm
 from .models import Blog
 
@@ -57,7 +59,14 @@ class BlogCreateView(LoginRequiredMixin, CreateView):
     model = Blog
     form_class = BlogForm
     template_name = "blog/blog_form.html"
-    success_url = reverse_lazy("blog:blog_list")
+
+    def form_valid(self, form):
+        # автоматически ставим автора записи
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("blog:blog_detail", kwargs={"pk": self.object.pk})
 
 
 class BlogUpdateView(LoginRequiredMixin, UpdateView):
@@ -67,6 +76,13 @@ class BlogUpdateView(LoginRequiredMixin, UpdateView):
     form_class = BlogForm
     template_name = "blog/blog_form.html"
 
+    def dispatch(self, request, *args, **kwargs):
+        blog = self.get_object()
+        #  редактировать может автор или Контент-менеджер
+        if blog.author != request.user and not request.user.groups.filter(name="Контент-менеджер").exists():
+            return HttpResponseForbidden("У вас нет прав для редактирования этой записи.")
+        return super().dispatch(request, *args, **kwargs)
+
     def get_success_url(self):
         return reverse("blog:blog_detail", kwargs={"pk": self.object.pk})
 
@@ -75,5 +91,12 @@ class BlogDeleteView(LoginRequiredMixin, DeleteView):
     """Удаление записи"""
 
     model = Blog
+    form_class = BlogForm
     template_name = "blog_confirm_delete.html"
-    success_url = reverse_lazy("blog:blog_list")
+
+    def dispatch(self, request, *args, **kwargs):
+        blog = self.get_object()
+        #  удалять может автор или Контент-менеджер
+        if blog.author != request.user and not request.user.groups.filter(name="Контент-менеджер").exists():
+            return HttpResponseForbidden("У вас нет прав для удаления этой записи.")
+        return super().dispatch(request, *args, **kwargs)

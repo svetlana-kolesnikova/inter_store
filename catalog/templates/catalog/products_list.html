@@ -26,6 +26,17 @@
                     <a href="{% url 'catalog:product_details' product.pk %}" class="btn btn-outline-primary btn-sm">
                         Читать далее
                     </a>
+                    <!-- Кнопка редактирования — только владелец -->
+                    {% if product.owner == user %}
+                        <a href="{% url 'catalog:product_update' product.pk %}"
+                           class="btn btn-warning btn-sm ms-1">Редактировать</a>
+                    {% endif %}
+
+                    <!-- Удалять может владелец или модератор (delete_product) -->
+                    {% if product.owner == user or perms.catalog.delete_product %}
+                        <a href="{% url 'catalog:product_delete' product.pk %}"
+                           class="btn btn-danger btn-sm ms-1">Удалить</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
