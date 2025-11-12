@@ -1,16 +1,16 @@
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
-from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.cache import cache
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
-from .services import get_products_by_category
+
 from .forms import ProductForm
-from .models import Contact, Product, Category
+from .models import Category, Contact, Product
+from .services import conditional_cache_page, get_cached_products, get_products_by_category
 
 
 class HomeView(ListView):
@@ -52,19 +52,10 @@ class ProductListView(ListView):
     paginate_by = 3
 
     def get_queryset(self):
-        # пробуем получить из кэша
-        products = cache.get("products_list")
-
-        # если нет — берём из БД
-        if not products:
-            products = Product.objects.order_by("-created_at")
-            # кладём в кеш на 5 минут (можно изменить)
-            cache.set("products_list", products, 60 * 5)
-
-        return products
+        return get_cached_products()
 
 
-@method_decorator(cache_page(60 * 5), name='dispatch')   # кэш на 5 минут
+@method_decorator(conditional_cache_page(60 * 5), name="dispatch")  # кэш на 5 минут
 class ProductDetailView(LoginRequiredMixin, DetailView):
     """Детали конкретного продукта"""
 
@@ -172,7 +163,7 @@ class ProductsByCategoryView(ListView):
 
     def get_queryset(self):
         category_id = self.kwargs["category_id"]
-        return get_products_by_category(category_id)
+        return get_products_by_category(category_id, use_cache=settings.CACHE_ENABLED)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

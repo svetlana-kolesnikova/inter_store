@@ -7,9 +7,9 @@ from .views import (
     ProductDeleteView,
     ProductDetailView,
     ProductListView,
+    ProductsByCategoryView,
     ProductUpdateView,
     UnpublishProductView,
-    ProductsByCategoryView,
 )
 
 app_name = "catalog"
