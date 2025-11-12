@@ -1,14 +1,16 @@
-
-
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.cache import cache
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from .forms import ProductForm
-from .models import Contact, Product
+from .models import Category, Contact, Product
+from .services import conditional_cache_page, get_cached_products, get_products_by_category
 
 
 class HomeView(ListView):
@@ -50,9 +52,10 @@ class ProductListView(ListView):
     paginate_by = 3
 
     def get_queryset(self):
-        return Product.objects.order_by("-created_at")
+        return get_cached_products()
 
 
+@method_decorator(conditional_cache_page(60 * 5), name="dispatch")  # кэш на 5 минут
 class ProductDetailView(LoginRequiredMixin, DetailView):
     """Детали конкретного продукта"""
 
@@ -75,6 +78,10 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         product = form.save(commit=False)
         product.owner = self.request.user
         product.save()
+
+        #  очищаем кеш списка
+        cache.delete("products_list")
+
         return super().form_valid(form)
 
 
@@ -91,6 +98,14 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         if product.owner != request.user:
             return HttpResponseForbidden("Вы не можете редактировать чужой продукт!")
         return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        #  удаляем кеш списка
+        cache.delete("products_list")
+
+        return response
 
     def get_success_url(self):
         return reverse("catalog:product_details", kwargs={"pk": self.object.pk})
@@ -117,6 +132,14 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
 
         return HttpResponseForbidden("У вас нет прав на удаление этого продукта.")
 
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+
+        #  очищаем кеш списка
+        cache.delete("products_list")
+
+        return response
+
 
 class UnpublishProductView(LoginRequiredMixin, View):
     """Отмена публикации продукта"""
@@ -132,3 +155,18 @@ class UnpublishProductView(LoginRequiredMixin, View):
         product.save()
 
         return redirect("catalog:product_details", pk=pk)
+
+
+class ProductsByCategoryView(ListView):
+    template_name = "catalog/products_by_category.html"
+    context_object_name = "products"
+
+    def get_queryset(self):
+        category_id = self.kwargs["category_id"]
+        return get_products_by_category(category_id, use_cache=settings.CACHE_ENABLED)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_id = self.kwargs["category_id"]
+        context["category"] = Category.objects.get(pk=category_id)
+        return context
